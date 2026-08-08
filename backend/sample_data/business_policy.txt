@@ -1,0 +1,13 @@
+SmartInsights Demo Store Business Policy
+
+Return Policy:
+Customers may return defective electronics within 7 days of delivery with original packaging.
+
+Shipping Policy:
+Standard delivery takes 3-5 business days. Express delivery is available in metro cities.
+
+Inventory Policy:
+Any product at or below reorder level must be replenished within 48 hours.
+
+Customer Service Goals:
+Respond to complaints within 24 hours. Delivery delay complaints should be escalated to logistics.
