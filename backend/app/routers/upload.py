@@ -63,6 +63,27 @@ async def upload_dataset(
         db.add(dataset)
         db.commit()
         db.refresh(dataset)
+
+        # LangChain + OpenAI embeddings → pgVector (PPT RAG stack)
+        from app.services.langchain_rag import index_path_for_user
+
+        index_meta = index_path_for_user(
+            current_user.id,
+            Path(dataset.file_path),
+            file.filename,
+        )
+        if index_meta.get("indexed"):
+            dataset.notes = (
+                f"Indexed into pgVector via LangChain "
+                f"({index_meta.get('chunks', 0)} chunks)"
+            )
+            dataset.status = "indexed"
+            db.commit()
+            db.refresh(dataset)
+        elif index_meta.get("message"):
+            dataset.notes = f"Stored for RAG · {index_meta['message']}"
+            db.commit()
+            db.refresh(dataset)
         return DatasetOut.model_validate(dataset)
 
     dest = user_dir / f"{uuid.uuid4().hex}{suffix}"

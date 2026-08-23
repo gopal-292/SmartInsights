@@ -17,17 +17,66 @@ DATA_TYPE_HINTS = {
 }
 
 COLUMN_ALIASES = {
-    "date": ["date", "order_date", "transaction_date", "invoice_date", "review_date"],
-    "product": ["product", "product_name", "item", "sku_name"],
-    "quantity": ["quantity", "qty", "units", "units_sold"],
-    "price": ["price", "unit_price", "selling_price"],
-    "customer": ["customer", "customer_name", "client"],
+    "date": [
+        "date",
+        "order_date",
+        "orderdate",
+        "transaction_date",
+        "invoice_date",
+        "review_date",
+    ],
+    "product": [
+        "product",
+        "product_name",
+        "productline",
+        "product_line",
+        "productcode",
+        "product_code",
+        "item",
+        "sku_name",
+    ],
+    "quantity": [
+        "quantity",
+        "qty",
+        "units",
+        "units_sold",
+        "quantityordered",
+        "quantity_ordered",
+    ],
+    "price": ["price", "unit_price", "selling_price", "priceeach", "price_each"],
+    "customer": [
+        "customer",
+        "customer_name",
+        "customername",
+        "client",
+        "contactname",
+        "contact_name",
+    ],
     "customer_id": ["customer_id", "cust_id", "client_id"],
-    "region": ["region", "city", "location", "state"],
-    "order_id": ["order_id", "invoice_id", "transaction_id"],
-    "category": ["category", "expense_category", "product_category"],
+    "region": [
+        "region",
+        "city",
+        "location",
+        "state",
+        "country",
+        "territory",
+    ],
+    "order_id": [
+        "order_id",
+        "ordernumber",
+        "order_number",
+        "invoice_id",
+        "transaction_id",
+    ],
+    "category": [
+        "category",
+        "expense_category",
+        "product_category",
+        "deal_size",
+        "dealsize",
+    ],
     "amount": ["amount", "expense_amount", "cost", "value"],
-    "description": ["description", "notes", "remarks"],
+    "description": ["description", "notes", "remarks", "addressline1", "address_line1"],
     "current_stock": ["current_stock", "stock", "quantity_on_hand", "inventory"],
     "reorder_level": ["reorder_level", "reorder", "min_stock"],
     "supplier": ["supplier", "vendor"],
@@ -37,7 +86,7 @@ COLUMN_ALIASES = {
     "last_purchase_date": ["last_purchase_date", "last_purchase", "last_order_date"],
     "rating": ["rating", "stars", "score"],
     "review_text": ["review_text", "review", "comment", "feedback"],
-    "revenue": ["revenue", "sales_revenue", "income"],
+    "revenue": ["revenue", "sales_revenue", "income", "sales"],
     "expenses": ["expenses", "total_expenses", "costs"],
     "profit": ["profit", "net_profit"],
 }
@@ -48,13 +97,31 @@ def _normalize_col(name: str) -> str:
 
 
 def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
-    renamed = {_normalize_col(c): c for c in df.columns}
-    df = df.rename(columns={v: k for k, v in renamed.items()})
+    df = df.rename(columns={c: _normalize_col(c) for c in df.columns})
+
+    # Ensure unique names after normalization (e.g. City + CITY)
+    seen: dict[str, int] = {}
+    unique_cols: list[str] = []
+    for col in df.columns:
+        if col not in seen:
+            seen[col] = 0
+            unique_cols.append(col)
+        else:
+            seen[col] += 1
+            unique_cols.append(f"{col}_{seen[col]}")
+    df.columns = unique_cols
+
     reverse_map: dict[str, str] = {}
+    used_canonical: set[str] = set()
     for canonical, aliases in COLUMN_ALIASES.items():
+        if canonical in df.columns:
+            used_canonical.add(canonical)
+            continue
         for alias in aliases:
-            if alias in df.columns and canonical not in df.columns:
+            if alias in df.columns and canonical not in used_canonical:
                 reverse_map[alias] = canonical
+                used_canonical.add(canonical)
+                break
     return df.rename(columns=reverse_map)
 
 
@@ -71,12 +138,51 @@ def detect_data_type(df: pd.DataFrame, filename: str = "") -> str:
     return best if scores[best] > 0 else "sales"
 
 
+def read_csv_robust(path: Path) -> pd.DataFrame:
+    """Read CSV files from Excel/Windows that are often CP1252, not UTF-8."""
+    from io import StringIO
+
+    raw = Path(path).read_bytes()
+    text: str | None = None
+    for encoding in ("utf-8-sig", "utf-8", "cp1252", "latin-1", "iso-8859-1"):
+        try:
+            text = raw.decode(encoding)
+            break
+        except UnicodeDecodeError:
+            continue
+    if text is None:
+        text = raw.decode("cp1252", errors="replace")
+
+    # Normalize newlines and drop NUL bytes that break parsers
+    text = text.replace("\x00", "").replace("\r\n", "\n").replace("\r", "\n")
+    if not text.strip():
+        raise ValueError("CSV file is empty.")
+
+    first_line = text.split("\n", 1)[0]
+    sep = ","
+    for candidate in (",", ";", "\t", "|"):
+        if first_line.count(candidate) > first_line.count(sep):
+            sep = candidate
+
+    try:
+        return pd.read_csv(StringIO(text), sep=sep, engine="python")
+    except Exception as exc:
+        # Last resort: let pandas guess the separator
+        try:
+            return pd.read_csv(StringIO(text), sep=None, engine="python")
+        except Exception as exc2:
+            raise ValueError(
+                "Could not parse CSV. Re-save in Excel as "
+                "'CSV UTF-8 (Comma delimited)' and try again."
+            ) from exc2
+
+
 def read_upload(path: Path) -> pd.DataFrame:
     suffix = path.suffix.lower()
     if suffix in {".xlsx", ".xls"}:
         return pd.read_excel(path)
     if suffix == ".csv":
-        return pd.read_csv(path)
+        return read_csv_robust(path)
     raise ValueError(f"Unsupported file type: {suffix}. Use CSV or Excel.")
 
 

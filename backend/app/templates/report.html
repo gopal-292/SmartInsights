@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SmartInsights Business Performance Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 14mm 18mm 14mm;
+      @bottom-center {
+        content: "SmartInsights · Page " counter(page) " of " counter(pages);
+        font-size: 9pt;
+        color: #5c6b63;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: #1c2b24;
+      font-size: 10.5pt;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .brand {
+      font-size: 11pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0f766e;
+      margin: 0 0 4pt;
+    }
+
+    h1 {
+      font-size: 22pt;
+      font-weight: 700;
+      margin: 0 0 6pt;
+      color: #14201a;
+    }
+
+    .meta {
+      color: #5c6b63;
+      font-size: 9.5pt;
+      margin: 0 0 16pt;
+      padding-bottom: 10pt;
+      border-bottom: 1.5pt solid #d7e3db;
+    }
+
+    .biz {
+      margin: 0 0 14pt;
+      padding: 8pt 10pt;
+      background: #f3f7f5;
+      border: 1pt solid #d7e3db;
+      border-radius: 4pt;
+      font-size: 9.5pt;
+    }
+
+    .biz strong { color: #0f766e; }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: #14201a;
+      margin: 0 0 8pt;
+      padding-bottom: 4pt;
+      border-bottom: 1pt solid #e4ece7;
+    }
+
+    h3 {
+      font-size: 11pt;
+      margin: 10pt 0 4pt;
+      color: #0f766e;
+    }
+
+    section {
+      margin-bottom: 14pt;
+      page-break-inside: avoid;
+    }
+
+    p { margin: 0 0 8pt; }
+
+    .kpi-grid {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .kpi-grid td {
+      width: 50%;
+      padding: 6pt 8pt;
+      border: 1pt solid #e4ece7;
+      vertical-align: top;
+    }
+
+    .kpi-label {
+      display: block;
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #5c6b63;
+      margin-bottom: 2pt;
+    }
+
+    .kpi-value {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #14201a;
+    }
+
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+      margin-top: 6pt;
+    }
+
+    table.data th,
+    table.data td {
+      border: 1pt solid #e4ece7;
+      padding: 5pt 6pt;
+      text-align: left;
+    }
+
+    table.data th {
+      background: #f3f7f5;
+      color: #5c6b63;
+      font-size: 8.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    ul {
+      margin: 4pt 0 0;
+      padding-left: 16pt;
+    }
+
+    li { margin-bottom: 4pt; }
+
+    .badge {
+      display: inline-block;
+      padding: 1pt 6pt;
+      border-radius: 10pt;
+      font-size: 8.5pt;
+      font-weight: 600;
+    }
+
+    .badge-high { background: #ffedd5; color: #9a3412; }
+    .badge-medium { background: #fef3c7; color: #92400e; }
+    .badge-low { background: #dbeafe; color: #1e40af; }
+    .badge-ok { background: #ccfbf1; color: #115e59; }
+    .badge-warn { background: #ffedd5; color: #9a3412; }
+
+    .rec-area {
+      font-weight: 700;
+      color: #0f766e;
+    }
+
+    .two-col {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 8pt 0;
+    }
+
+    .two-col td {
+      width: 50%;
+      vertical-align: top;
+    }
+
+    .footer-note {
+      margin-top: 16pt;
+      padding-top: 8pt;
+      border-top: 1pt solid #d7e3db;
+      font-size: 8.5pt;
+      color: #5c6b63;
+    }
+  </style>
+</head>
+<body>
+  <p class="brand">SmartInsights</p>
+  <h1>Business Performance Report</h1>
+  <p class="meta">Generated {{ generated_at }} · AI-powered analysis for review and documentation</p>
+
+  {% if business %}
+  <div class="biz">
+    <strong>{{ business.business_name }}</strong>
+    {% if business.industry %} · {{ business.industry }}{% endif %}
+    {% if business.location %} · {{ business.location }}{% endif %}
+    {% if business.business_size %} · {{ business.business_size }}{% endif %}
+    {% if business.currency %} · Currency: {{ business.currency }}{% endif %}
+  </div>
+  {% endif %}
+
+  <section>
+    <h2>1. Executive Summary</h2>
+    <p>{{ executive_summary.summary or "No summary available. Upload business data to generate insights." }}</p>
+    {% if executive_summary.insights %}
+    <ul>
+      {% for item in executive_summary.insights %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>2. KPI Snapshot</h2>
+    <table class="kpi-grid">
+      <tr>
+        <td>
+          <span class="kpi-label">Revenue</span>
+          <span class="kpi-value">{{ kpis.total_revenue | inr }}</span>
+        </td>
+        <td>
+          <span class="kpi-label">Expenses</span>
+          <span class="kpi-value">{{ kpis.total_expenses | inr }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="kpi-label">Net Profit</span>
+          <span class="kpi-value">{{ kpis.net_profit | inr }}</span>
+        </td>
+        <td>
+          <span class="kpi-label">Profit Margin</span>
+          <span class="kpi-value">{{ kpis.profit_margin | pct }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="kpi-label">Orders</span>
+          <span class="kpi-value">{{ kpis.total_orders }}</span>
+        </td>
+        <td>
+          <span class="kpi-label">Customers</span>
+          <span class="kpi-value">{{ kpis.total_customers }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="kpi-label">Avg Order Value</span>
+          <span class="kpi-value">{{ kpis.average_order_value | inr }}</span>
+        </td>
+        <td>
+          <span class="kpi-label">Sales Growth</span>
+          <span class="kpi-value">{{ kpis.sales_growth | pct }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="kpi-label">Inventory Value</span>
+          <span class="kpi-value">{{ kpis.inventory_value | inr }}</span>
+        </td>
+        <td>
+          <span class="kpi-label">Customer Satisfaction</span>
+          <span class="kpi-value">
+            {% if kpis.customer_satisfaction %}{{ kpis.customer_satisfaction }}/5{% else %}—{% endif %}
+          </span>
+        </td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. Revenue &amp; Sales Analysis</h2>
+    {% if sales.top_product %}
+    <p>
+      Top product: <strong>{{ sales.top_product.product }}</strong>
+      ({{ sales.top_product.revenue | inr }}, {{ sales.top_product.units }} units)
+    </p>
+    {% endif %}
+    {% set products = sales.by_product or [] %}
+    {% if products %}
+    <h3>Top products by revenue</h3>
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Revenue</th>
+          <th>Units</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in products[:8] %}
+        <tr>
+          <td>{{ row.product }}</td>
+          <td>{{ row.revenue | inr }}</td>
+          <td>{{ row.units }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No sales product breakdown available.</p>
+    {% endif %}
+
+    {% set regions = sales.by_region or [] %}
+    {% if regions %}
+    <h3>Sales by region</h3>
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in regions[:8] %}
+        <tr>
+          <td>{{ row.region }}</td>
+          <td>{{ row.revenue | inr }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>4. Expense Analysis</h2>
+    {% if expenses.highest_category %}
+    <p>
+      Highest expense category:
+      <strong>{{ expenses.highest_category.category }}</strong>
+      ({{ expenses.highest_category.amount | inr }})
+      · Growth: {{ (expenses.expense_growth or 0) | pct }}
+    </p>
+    {% endif %}
+    {% set cats = expenses.by_category or [] %}
+    {% if cats %}
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in cats %}
+        <tr>
+          <td>{{ row.category }}</td>
+          <td>{{ row.amount | inr }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No expense category data available.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>5. Profitability Analysis</h2>
+    <p>
+      Net profit {{ kpis.net_profit | inr }} with margin {{ kpis.profit_margin | pct }}.
+    </p>
+    {% set months = profitability.monthly or [] %}
+    {% if months %}
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Revenue</th>
+          <th>Expenses</th>
+          <th>Profit</th>
+          <th>Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in months[-8:] %}
+        <tr>
+          <td>{{ row.period }}</td>
+          <td>{{ row.revenue | inr }}</td>
+          <td>{{ row.expenses | inr }}</td>
+          <td>{{ row.profit | inr }}</td>
+          <td>{{ row.margin | pct }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>6. Inventory Analysis</h2>
+    <p>Total stock value: <strong>{{ (inventory.total_stock_value or 0) | inr }}</strong></p>
+    {% set reorder = inventory.reorder_required or [] %}
+    {% if reorder %}
+    <h3>Reorder required</h3>
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Current Stock</th>
+          <th>Reorder Level</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in reorder %}
+        <tr>
+          <td>{{ item.product }}</td>
+          <td>{{ item.current_stock }}</td>
+          <td>{{ item.reorder_level }}</td>
+          <td><span class="badge badge-warn">{{ item.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No products currently require reordering.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>7. Customer &amp; Sentiment Analysis</h2>
+    <table class="two-col">
+      <tr>
+        <td>
+          <h3>Sentiment distribution</h3>
+          {% set dist = sentiment.distribution or {} %}
+          {% if dist %}
+          <ul>
+            <li>Positive: {{ dist.Positive or 0 }}%</li>
+            <li>Neutral: {{ dist.Neutral or 0 }}%</li>
+            <li>Negative: {{ dist.Negative or 0 }}%</li>
+          </ul>
+          <p>Main complaint: <strong>{{ sentiment.main_complaint or "None detected" }}</strong></p>
+          {% else %}
+          <p>No review sentiment available.</p>
+          {% endif %}
+        </td>
+        <td>
+          <h3>Customer segments</h3>
+          {% set segs = segments.segments or [] %}
+          {% if segs %}
+          <ul>
+            {% for seg in segs %}
+            <li>
+              {{ seg.segment }} — {{ seg.count }} customers
+              (avg spend {{ seg.avg_spending | inr }})
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p>No segmentation results available.</p>
+          {% endif %}
+        </td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>8. Sales Forecast</h2>
+    {% if forecast.next_month_revenue is not none %}
+    <p>
+      Predicted next-month revenue:
+      <strong>{{ forecast.next_month_revenue | inr }}</strong>
+      {% if forecast.selected_model %}
+      · Model: {{ forecast.selected_model }}
+      {% elif forecast.models_used %}
+      · Models: {{ forecast.models_used | join(", ") }}
+      {% endif %}
+      {% if forecast.confidence %}
+      · Confidence: {{ forecast.confidence }}
+      {% endif %}
+    </p>
+    {% if forecast.accuracy and forecast.accuracy.mape is not none %}
+    <p>
+      Walk-forward accuracy: MAPE {{ forecast.accuracy.mape }}%
+      {% if forecast.accuracy.direction_accuracy is not none %}
+      · Direction {{ forecast.accuracy.direction_accuracy }}%
+      {% endif %}
+      {% if forecast.accuracy.folds %}
+      · {{ forecast.accuracy.folds }} folds
+      {% endif %}
+    </p>
+    {% endif %}
+    {% set preds = forecast.predictions or [] %}
+    {% if preds %}
+    <table class="data">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Predicted Revenue</th>
+          <th>80% Range</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in preds %}
+        <tr>
+          <td>{{ row.period }}</td>
+          <td>{{ row.predicted_revenue | inr }}</td>
+          <td>
+            {% if row.lower_bound is defined and row.upper_bound is defined %}
+            {{ row.lower_bound | inr }} – {{ row.upper_bound | inr }}
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    {% else %}
+    <p>{{ forecast.message or "Not enough history to forecast yet." }}</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>9. Anomaly Detection</h2>
+    <p>
+      Detected <strong>{{ anomalies.count or 0 }}</strong> unusual patterns
+      {% if anomalies.techniques %}
+      using {{ anomalies.techniques | join(", ") }}
+      {% endif %}.
+    </p>
+    {% set findings = anomalies.anomalies or [] %}
+    {% if findings %}
+    <ul>
+      {% for item in findings[:10] %}
+      <li>{{ item.message }}{% if item.date %} ({{ item.date }}){% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>10. AI Insights &amp; Recommendations</h2>
+    {% if recommendations.market_context and recommendations.market_context.summary %}
+    <p><strong>Market situation:</strong> {{ recommendations.market_context.summary }}</p>
+    {% endif %}
+    {% set findings = recommendations.key_findings or [] %}
+    {% if findings %}
+    <p><strong>Key findings</strong></p>
+    <ul>
+      {% for line in findings %}
+      <li>{{ line }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% set recs = recommendations.recommendations or [] %}
+    {% if recs %}
+    <p><strong>Recommended actions</strong></p>
+    <ul>
+      {% for r in recs %}
+      <li>
+        <span class="badge badge-{{ r.priority or 'low' }}">{{ r.priority or "low" }}</span>
+        <span class="rec-area">{{ r.area }}:</span>
+        {{ r.action or r.recommendation }}
+        {% if r.expected_impact %}
+        <em>(Impact: {{ r.expected_impact }})</em>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No recommendations available yet.</p>
+    {% endif %}
+  </section>
+
+  <p class="footer-note">
+    This report was generated by SmartInsights using Jinja2 templates and WeasyPrint PDF rendering
+    from uploaded business datasets. Figures reflect the latest processed data for this account.
+  </p>
+</body>
+</html>

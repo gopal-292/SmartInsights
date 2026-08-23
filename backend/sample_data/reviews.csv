@@ -1,16 +1,81 @@
 Customer,Rating,Review Text,Date
-Asha Mehta,5,Excellent laptop quality and fast delivery,2025-02-05
-Rohan Shah,4,Good mouse, packaging was neat,2025-02-12
-Priya Nair,2,Delivery delay of almost one week,2025-03-02
-Vikram Rao,5,Monitor display is amazing,2025-03-10
-Neha Gupta,3,Average experience, support was slow,2025-03-18
-Karan Patel,1,Product arrived late and box was damaged,2025-04-01
-Sana Khan,4,Great headphones for the price,2025-04-09
-Asha Mehta,5,Love the service and product quality,2025-05-02
-Rohan Shah,2,Shipping delay again, very frustrating,2025-05-15
-Priya Nair,4,Keyboard feels premium and responsive,2025-06-01
-Vikram Rao,5,Perfect purchase, highly recommend,2025-06-12
-Neha Gupta,2,Customer service was rude on call,2025-06-20
-Karan Patel,3,Okay product but expensive,2025-07-03
-Sana Khan,1,Worst delivery experience this month,2025-07-11
-Asha Mehta,5,Fast delivery and excellent packaging,2025-07-20
+CUST020,4,Very happy with the packaging,2024-08-02
+CUST049,3,Decent but the range could be wider,2024-08-19
+CUST026,5,Fast delivery and fresh stock,2024-08-22
+CUST007,2,Order arrived late and one item was damaged,2024-08-25
+CUST024,3,"Average experience, nothing special",2024-08-26
+CUST021,1,Delivery was late again this month,2024-08-28
+CUST004,1,Delivery was late again this month,2024-09-26
+CUST054,2,Support was rude when I asked about the delay,2024-09-29
+CUST019,3,Product is okay for the price,2024-10-04
+CUST055,1,"Delivery delay every single time, please fix it",2024-10-07
+CUST023,2,Order arrived late and one item was damaged,2024-10-29
+CUST059,2,Order arrived late and one item was damaged,2024-11-04
+CUST053,4,Friendly staff and good service,2024-11-16
+CUST049,3,"Average experience, nothing special",2024-11-22
+CUST018,5,Very happy with the packaging,2024-12-29
+CUST032,3,"Average experience, nothing special",2025-01-11
+CUST018,5,Very happy with the packaging,2025-01-22
+CUST020,1,Delivery was late again this month,2025-01-27
+CUST051,4,"Great quality rice, will buy again",2025-01-29
+CUST015,4,Friendly staff and good service,2025-02-13
+CUST033,1,"Very slow shipping, waited five days",2025-02-13
+CUST056,5,"Perfect, exactly what I ordered",2025-02-25
+CUST053,1,"Very slow shipping, waited five days",2025-03-07
+CUST060,4,Friendly staff and good service,2025-03-20
+CUST041,1,Delivery was late again this month,2025-03-27
+CUST008,5,"Great quality rice, will buy again",2025-03-30
+CUST012,4,"Great quality rice, will buy again",2025-04-01
+CUST037,2,"Delivery delay every single time, please fix it",2025-04-04
+CUST015,2,Support was rude when I asked about the delay,2025-04-07
+CUST010,2,Delivery was late again this month,2025-04-23
+CUST033,5,"Perfect, exactly what I ordered",2025-05-09
+CUST051,3,Decent but the range could be wider,2025-06-15
+CUST003,3,Product is okay for the price,2025-06-23
+CUST044,5,"Great quality rice, will buy again",2025-06-24
+CUST030,3,Product is okay for the price,2025-07-09
+CUST039,4,"Perfect, exactly what I ordered",2025-07-12
+CUST036,5,Friendly staff and good service,2025-07-17
+CUST058,3,Product is okay for the price,2025-08-01
+CUST043,3,Product is okay for the price,2025-08-02
+CUST033,2,"Delivery delay every single time, please fix it",2025-08-16
+CUST038,2,"Delivery delay every single time, please fix it",2025-08-30
+CUST025,1,"Delivery delay every single time, please fix it",2025-08-31
+CUST037,3,Decent but the range could be wider,2025-09-07
+CUST021,4,Excellent prices compared to the market,2025-09-10
+CUST005,1,Delivery was late again this month,2025-09-24
+CUST024,1,Order arrived late and one item was damaged,2025-09-27
+CUST005,2,"Very slow shipping, waited five days",2025-09-30
+CUST027,4,Fast delivery and fresh stock,2025-10-24
+CUST010,2,Delivery was late again this month,2025-11-01
+CUST010,5,Excellent prices compared to the market,2025-11-04
+CUST027,2,Delivery was late again this month,2025-11-12
+CUST057,2,Late delivery and no update from the team,2025-11-14
+CUST022,5,Fast delivery and fresh stock,2025-11-23
+CUST039,4,Friendly staff and good service,2025-11-30
+CUST033,3,"Average experience, nothing special",2025-12-22
+CUST050,2,Order arrived late and one item was damaged,2025-12-22
+CUST060,4,"Perfect, exactly what I ordered",2026-01-02
+CUST005,1,Order arrived late and one item was damaged,2026-01-06
+CUST012,5,"Great quality rice, will buy again",2026-01-08
+CUST037,4,Very happy with the packaging,2026-01-24
+CUST004,5,Excellent prices compared to the market,2026-02-19
+CUST035,5,Very happy with the packaging,2026-02-26
+CUST010,1,Support was rude when I asked about the delay,2026-02-26
+CUST052,5,"Perfect, exactly what I ordered",2026-03-07
+CUST052,2,Support was rude when I asked about the delay,2026-03-08
+CUST035,3,Product is okay for the price,2026-03-14
+CUST018,4,"Perfect, exactly what I ordered",2026-03-15
+CUST052,1,"Very slow shipping, waited five days",2026-03-17
+CUST014,4,"Perfect, exactly what I ordered",2026-04-02
+CUST059,2,"Delivery delay every single time, please fix it",2026-04-02
+CUST043,5,Friendly staff and good service,2026-04-20
+CUST019,4,"Perfect, exactly what I ordered",2026-04-24
+CUST001,4,Very happy with the packaging,2026-05-07
+CUST041,3,"Average experience, nothing special",2026-05-07
+CUST033,4,"Great quality rice, will buy again",2026-06-11
+CUST011,3,Decent but the range could be wider,2026-06-13
+CUST050,2,"Delivery delay every single time, please fix it",2026-06-28
+CUST034,5,Very happy with the packaging,2026-07-14
+CUST011,4,Very happy with the packaging,2026-07-29
+CUST041,4,"Great quality rice, will buy again",2026-07-31

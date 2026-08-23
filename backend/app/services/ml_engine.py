@@ -6,9 +6,11 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
-from sklearn.ensemble import IsolationForest, RandomForestRegressor
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
+
+from app.services.forecasting import build_forecast
+from app.services.patterns import detect_patterns
 
 
 def _ensure_revenue(sales: pd.DataFrame) -> pd.DataFrame:
@@ -18,56 +20,141 @@ def _ensure_revenue(sales: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def forecast_sales(frames: dict[str, pd.DataFrame], periods: int = 1) -> dict[str, Any]:
-    sales = _ensure_revenue(frames.get("sales", pd.DataFrame()))
-    if sales.empty or "date" not in sales.columns or "revenue" not in sales.columns:
+def forecast_sales(frames: dict[str, pd.DataFrame], periods: int = 6) -> dict[str, Any]:
+    """Backtested monthly revenue forecast enriched with the detected history patterns."""
+    sales = frames.get("sales", pd.DataFrame())
+    if sales.empty or "date" not in sales.columns:
         return {
             "message": "Upload historical sales data with date and revenue/quantity-price to forecast.",
             "predictions": [],
+            "history": [],
+            "evaluation": [],
         }
 
-    sales["date"] = pd.to_datetime(sales["date"], errors="coerce")
-    sales = sales.dropna(subset=["date"])
-    monthly = (
-        sales.groupby(sales["date"].dt.to_period("M"))["revenue"].sum().sort_index().astype(float)
+    result = build_forecast(sales, periods=periods)
+    patterns = detect_patterns(frames)
+    result["patterns"] = patterns
+    result["key_findings"] = patterns.get("headlines", [])
+    return result
+
+
+MAD_TO_SIGMA = 1.4826
+
+
+def _robust_scale(values: np.ndarray) -> float:
+    """Median absolute deviation rescaled to a standard-deviation equivalent.
+
+    Robust to the very outliers being searched for, unlike mean and standard deviation.
+    """
+    mad = float(np.median(np.abs(values - np.median(values))))
+    if mad > 1e-9:
+        return mad * MAD_TO_SIGMA
+    fallback = float(np.std(values))
+    return fallback if fallback > 1e-9 else 1.0
+
+
+def _sales_anomalies(sales: pd.DataFrame) -> list[dict[str, Any]]:
+    """Flag daily revenue that breaks the local level after weekday effects are removed."""
+    daily = sales.copy()
+    daily["date"] = pd.to_datetime(daily["date"], errors="coerce")
+    daily = daily.dropna(subset=["date"])
+    series = daily.groupby(daily["date"].dt.normalize())["revenue"].sum().sort_index()
+    if len(series) < 21:
+        return []
+
+    # A busy Saturday is not an anomaly, so normalise the weekly shape out first.
+    weekday = series.index.dayofweek
+    overall_median = float(series.median()) or 1.0
+    weekday_factor = (
+        series.groupby(weekday).median() / overall_median
+    ).replace(0, 1.0)
+    factors = np.array([float(weekday_factor.get(d, 1.0)) or 1.0 for d in weekday])
+    adjusted = pd.Series(series.values / factors, index=series.index)
+
+    # Local level, so a festive month is judged against its own neighbourhood.
+    expected = adjusted.rolling(29, center=True, min_periods=7).median()
+    residual = (adjusted - expected).dropna()
+    if residual.empty:
+        return []
+
+    scale = _robust_scale(residual.values)
+    robust_z = residual / scale
+
+    model = IsolationForest(contamination=0.02, random_state=42)
+    forest_labels = pd.Series(
+        model.fit_predict(residual.values.reshape(-1, 1)), index=residual.index
     )
-    if len(monthly) < 3:
-        return {
-            "message": "Need at least 3 months of sales history for a reliable forecast.",
-            "history": [{"period": str(i), "revenue": float(v)} for i, v in monthly.items()],
-            "predictions": [],
-        }
 
-    X = np.arange(len(monthly)).reshape(-1, 1)
-    y = monthly.values
-    lr = LinearRegression().fit(X, y)
-    rf = RandomForestRegressor(n_estimators=80, random_state=42).fit(X, y)
-
-    predictions = []
-    last_period = monthly.index[-1]
-    for i in range(1, periods + 1):
-        idx = len(monthly) + i - 1
-        lr_pred = float(lr.predict([[idx]])[0])
-        rf_pred = float(rf.predict([[idx]])[0])
-        blended = max(0.0, (lr_pred * 0.35) + (rf_pred * 0.65))
-        next_period = last_period + i
-        predictions.append(
+    findings: list[dict[str, Any]] = []
+    for date, z in robust_z.items():
+        agreed = forest_labels.loc[date] == -1 and abs(z) >= 2.5
+        if abs(z) < 3.5 and not agreed:
+            continue
+        actual = float(series.loc[date])
+        baseline = float(expected.loc[date]) * float(weekday_factor.get(date.dayofweek, 1.0))
+        findings.append(
             {
-                "period": str(next_period),
-                "predicted_revenue": round(blended, 2),
-                "model_breakdown": {
-                    "linear_regression": round(max(0.0, lr_pred), 2),
-                    "random_forest": round(max(0.0, rf_pred), 2),
-                },
+                "type": "sales",
+                "date": date.strftime("%Y-%m-%d"),
+                "value": round(actual, 2),
+                "expected": round(baseline, 2),
+                "expected_range": [
+                    round(max(0.0, baseline - 2 * scale), 2),
+                    round(baseline + 2 * scale, 2),
+                ],
+                "z_score": round(float(z), 2),
+                "severity": "high" if abs(z) >= 5 else "medium",
+                "status": "Anomaly Detected",
+                "message": (
+                    f"Daily sales of ₹{actual:,.0f} versus an expected ₹{baseline:,.0f} "
+                    f"({'above' if actual > baseline else 'below'} normal for a "
+                    f"{date.strftime('%A')})"
+                ),
             }
         )
+    return findings
 
-    return {
-        "history": [{"period": str(i), "revenue": round(float(v), 2)} for i, v in monthly.items()],
-        "predictions": predictions,
-        "next_month_revenue": predictions[0]["predicted_revenue"] if predictions else None,
-        "models_used": ["Linear Regression", "Random Forest"],
-    }
+
+def _expense_anomalies(expenses: pd.DataFrame) -> list[dict[str, Any]]:
+    """Score each expense against its own category; a rent row is not a marketing row."""
+    df = expenses.copy()
+    df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+    df = df.dropna(subset=["amount"])
+    if len(df) < 8:
+        return []
+
+    if "category" not in df.columns:
+        df["category"] = "Uncategorized"
+
+    findings: list[dict[str, Any]] = []
+    for category, group in df.groupby("category"):
+        values = group["amount"].astype(float).values
+        if len(group) < 6:
+            continue
+        centre = float(np.median(values))
+        scale = _robust_scale(values)
+        for idx, amount in zip(group.index, values):
+            z = (float(amount) - centre) / scale
+            if z < 3.5:
+                continue
+            row = group.loc[idx]
+            findings.append(
+                {
+                    "type": "expense",
+                    "date": str(row.get("date", ""))[:10],
+                    "value": round(float(amount), 2),
+                    "expected": round(centre, 2),
+                    "category": str(category),
+                    "z_score": round(float(z), 2),
+                    "severity": "high" if z >= 5 else "medium",
+                    "status": "Anomaly Detected",
+                    "message": (
+                        f"{category} spend of ₹{float(amount):,.0f} against a typical "
+                        f"₹{centre:,.0f} for this category"
+                    ),
+                }
+            )
+    return findings
 
 
 def detect_anomalies(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
@@ -75,52 +162,11 @@ def detect_anomalies(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
 
     sales = _ensure_revenue(frames.get("sales", pd.DataFrame()))
     if not sales.empty and "date" in sales.columns and "revenue" in sales.columns:
-        daily = sales.copy()
-        daily["date"] = pd.to_datetime(daily["date"], errors="coerce")
-        daily = daily.dropna(subset=["date"])
-        series = daily.groupby(daily["date"].dt.date)["revenue"].sum()
-        if len(series) >= 8:
-            values = series.values.reshape(-1, 1)
-            model = IsolationForest(contamination=0.08, random_state=42)
-            labels = model.fit_predict(values)
-            mean = float(series.mean())
-            std = float(series.std() or 1)
-            for date, value, label in zip(series.index, series.values, labels):
-                z = (float(value) - mean) / std
-                if label == -1 or abs(z) >= 2.5:
-                    findings.append(
-                        {
-                            "type": "sales",
-                            "date": str(date),
-                            "value": round(float(value), 2),
-                            "expected_range": [
-                                round(max(0.0, mean - 1.5 * std), 2),
-                                round(mean + 1.5 * std, 2),
-                            ],
-                            "z_score": round(float(z), 2),
-                            "status": "Anomaly Detected",
-                            "message": f"Unusual daily sales of ₹{float(value):,.0f}",
-                        }
-                    )
+        findings.extend(_sales_anomalies(sales))
 
     expenses = frames.get("expenses", pd.DataFrame())
     if not expenses.empty and "amount" in expenses.columns:
-        amounts = expenses["amount"].astype(float)
-        if len(amounts) >= 8:
-            q1, q3 = amounts.quantile(0.25), amounts.quantile(0.75)
-            iqr = q3 - q1
-            upper = q3 + 1.5 * iqr
-            for _, row in expenses[amounts > upper].head(10).iterrows():
-                findings.append(
-                    {
-                        "type": "expense",
-                        "date": str(row.get("date", "")),
-                        "value": round(float(row["amount"]), 2),
-                        "category": row.get("category", "Unknown"),
-                        "status": "Anomaly Detected",
-                        "message": f"Unexpected expense spike in {row.get('category', 'Unknown')}",
-                    }
-                )
+        findings.extend(_expense_anomalies(expenses))
 
     inventory = frames.get("inventory", pd.DataFrame())
     if not inventory.empty and {"current_stock", "reorder_level"}.issubset(inventory.columns):
@@ -131,15 +177,21 @@ def detect_anomalies(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
                     "type": "inventory",
                     "product": row.get("product", "Unknown"),
                     "value": int(row.get("current_stock", 0)),
+                    "severity": "high",
                     "status": "Anomaly Detected",
                     "message": f"Sudden low stock risk for {row.get('product', 'Unknown')}",
                 }
             )
 
+    findings.sort(key=lambda item: -abs(float(item.get("z_score", 0) or 0)))
     return {
         "count": len(findings),
         "anomalies": findings[:25],
-        "techniques": ["Z-Score", "IQR", "Isolation Forest"],
+        "techniques": ["Median Absolute Deviation", "Rolling Median Baseline", "Isolation Forest"],
+        "method": (
+            "Weekday effects and the local level are removed before scoring, so seasonal "
+            "peaks are not reported as anomalies."
+        ),
     }
 
 

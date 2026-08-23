@@ -11,14 +11,20 @@ from app.services.preprocessing import detect_data_type, preprocess_dataframe, r
 
 
 def load_user_frames(db: Session, user_id: int) -> dict[str, pd.DataFrame]:
+    """Load the latest processed dataset for each data type.
+
+    Using the newest file per type keeps demos clean when users re-upload samples.
+    """
     datasets = (
         db.query(Dataset)
         .filter(Dataset.user_id == user_id, Dataset.status == "processed")
         .order_by(Dataset.uploaded_at.desc())
         .all()
     )
-    frames: dict[str, list[pd.DataFrame]] = {}
+    merged: dict[str, pd.DataFrame] = {}
     for ds in datasets:
+        if ds.data_type in merged:
+            continue
         path = Path(ds.file_path)
         if not path.exists():
             continue
@@ -26,11 +32,7 @@ def load_user_frames(db: Session, user_id: int) -> dict[str, pd.DataFrame]:
             df = pd.read_parquet(path) if path.suffix == ".parquet" else pd.read_csv(path)
         except Exception:
             continue
-        frames.setdefault(ds.data_type, []).append(df)
-
-    merged: dict[str, pd.DataFrame] = {}
-    for dtype, parts in frames.items():
-        merged[dtype] = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+        merged[ds.data_type] = df
     return merged
 
 

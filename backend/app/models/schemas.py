@@ -15,6 +15,14 @@ class UserLogin(BaseModel):
     password: str
 
 
+class BetterAuthBridgeIn(BaseModel):
+    """Sync a Better Auth session user into the FastAPI/SQLAlchemy user store."""
+
+    email: EmailStr
+    full_name: str = Field(min_length=1, max_length=255)
+    better_auth_user_id: str | None = None
+
+
 class UserOut(BaseModel):
     id: int
     email: EmailStr

@@ -1,29 +1,313 @@
 Date,Expense Category,Amount,Description
-2025-01-05,Rent,45000,Office rent January
-2025-01-10,Marketing,18000,Social ads campaign
-2025-01-18,Salaries,120000,Staff salaries
-2025-01-25,Utilities,8000,Electricity and internet
-2025-02-05,Rent,45000,Office rent February
-2025-02-12,Marketing,22000,Influencer promotions
-2025-02-18,Salaries,120000,Staff salaries
-2025-02-22,Logistics,15000,Courier charges
-2025-03-05,Rent,45000,Office rent March
-2025-03-11,Marketing,35000,Festival campaign
-2025-03-18,Salaries,125000,Staff salaries
-2025-03-27,Utilities,9000,Electricity and internet
-2025-04-05,Rent,45000,Office rent April
-2025-04-14,Marketing,28000,Search ads
-2025-04-18,Salaries,125000,Staff salaries
-2025-04-26,Inventory Purchase,90000,Restock laptops and monitors
-2025-05-05,Rent,45000,Office rent May
-2025-05-13,Marketing,40000,Summer sale ads
-2025-05-18,Salaries,130000,Staff salaries
-2025-05-24,Logistics,18000,Shipping surge
-2025-06-05,Rent,45000,Office rent June
-2025-06-10,Marketing,32000,Retention campaign
-2025-06-18,Salaries,130000,Staff salaries
-2025-06-28,Utilities,9500,Electricity and internet
-2025-07-05,Rent,45000,Office rent July
-2025-07-12,Marketing,55000,Aggressive acquisition push
-2025-07-18,Salaries,130000,Staff salaries
-2025-07-22,Miscellaneous,25000,Unexpected repair costs
+2024-08-01,Purchases,353796.3,Stock purchased from suppliers
+2024-08-01,Rent,45000.0,Monthly shop rent
+2024-08-01,Salaries,55000.0,Staff salaries
+2024-08-01,Utilities,12000.0,Electricity and water
+2024-08-01,Packaging,4288.44,Packaging material
+2024-08-04,Marketing,3519.92,Local ads and promotions
+2024-08-04,Logistics,2680.28,Delivery and transport
+2024-08-11,Marketing,3292.48,Local ads and promotions
+2024-08-11,Logistics,2680.28,Delivery and transport
+2024-08-18,Marketing,2874.72,Local ads and promotions
+2024-08-18,Logistics,2680.28,Delivery and transport
+2024-08-25,Marketing,2980.38,Local ads and promotions
+2024-08-25,Logistics,2680.28,Delivery and transport
+2024-09-01,Purchases,399125.1,Stock purchased from suppliers
+2024-09-01,Rent,45000.0,Monthly shop rent
+2024-09-01,Salaries,55440.0,Staff salaries
+2024-09-01,Utilities,12180.0,Electricity and water
+2024-09-01,Packaging,4837.88,Packaging material
+2024-09-04,Marketing,3016.0,Local ads and promotions
+2024-09-04,Logistics,3069.03,Delivery and transport
+2024-09-11,Marketing,3115.96,Local ads and promotions
+2024-09-11,Logistics,3069.03,Delivery and transport
+2024-09-18,Marketing,2933.52,Local ads and promotions
+2024-09-18,Logistics,3069.03,Delivery and transport
+2024-09-25,Marketing,2781.43,Local ads and promotions
+2024-09-25,Logistics,3069.03,Delivery and transport
+2024-10-01,Purchases,483291.6,Stock purchased from suppliers
+2024-10-01,Rent,45000.0,Monthly shop rent
+2024-10-01,Salaries,55883.52,Staff salaries
+2024-10-01,Utilities,12360.0,Electricity and water
+2024-10-01,Packaging,5858.08,Packaging material
+2024-10-04,Marketing,3292.56,Local ads and promotions
+2024-10-04,Logistics,3771.14,Delivery and transport
+2024-10-11,Marketing,2825.02,Local ads and promotions
+2024-10-11,Logistics,3771.14,Delivery and transport
+2024-10-18,Marketing,2936.28,Local ads and promotions
+2024-10-18,Logistics,3771.14,Delivery and transport
+2024-10-25,Marketing,3207.72,Local ads and promotions
+2024-10-25,Logistics,3771.14,Delivery and transport
+2024-11-01,Purchases,503830.8,Stock purchased from suppliers
+2024-11-01,Rent,45000.0,Monthly shop rent
+2024-11-01,Salaries,56330.59,Staff salaries
+2024-11-01,Utilities,12540.0,Electricity and water
+2024-11-01,Packaging,6107.04,Packaging material
+2024-11-04,Marketing,3270.45,Local ads and promotions
+2024-11-04,Logistics,3988.66,Delivery and transport
+2024-11-11,Marketing,2866.74,Local ads and promotions
+2024-11-11,Logistics,3988.66,Delivery and transport
+2024-11-18,Marketing,2659.41,Local ads and promotions
+2024-11-18,Logistics,3988.66,Delivery and transport
+2024-11-25,Marketing,3382.79,Local ads and promotions
+2024-11-25,Logistics,3988.66,Delivery and transport
+2024-12-01,Purchases,452565.3,Stock purchased from suppliers
+2024-12-01,Rent,45000.0,Monthly shop rent
+2024-12-01,Salaries,56781.23,Staff salaries
+2024-12-01,Utilities,12720.0,Electricity and water
+2024-12-01,Packaging,5485.64,Packaging material
+2024-12-04,Marketing,2846.88,Local ads and promotions
+2024-12-04,Logistics,3634.24,Delivery and transport
+2024-12-11,Marketing,3396.83,Local ads and promotions
+2024-12-11,Logistics,3634.24,Delivery and transport
+2024-12-18,Marketing,2560.08,Local ads and promotions
+2024-12-18,Logistics,3634.24,Delivery and transport
+2024-12-25,Marketing,2941.47,Local ads and promotions
+2024-12-25,Logistics,3634.24,Delivery and transport
+2025-01-01,Purchases,341810.7,Stock purchased from suppliers
+2025-01-01,Rent,45000.0,Monthly shop rent
+2025-01-01,Salaries,57235.48,Staff salaries
+2025-01-01,Utilities,12900.0,Electricity and water
+2025-01-01,Packaging,4143.16,Packaging material
+2025-01-04,Marketing,3309.71,Local ads and promotions
+2025-01-04,Logistics,2783.69,Delivery and transport
+2025-01-11,Marketing,3283.57,Local ads and promotions
+2025-01-11,Logistics,2783.69,Delivery and transport
+2025-01-18,Marketing,4167.01,Local ads and promotions
+2025-01-18,Logistics,2783.69,Delivery and transport
+2025-01-25,Marketing,3441.13,Local ads and promotions
+2025-01-25,Logistics,2783.69,Delivery and transport
+2025-02-01,Purchases,263564.4,Stock purchased from suppliers
+2025-02-01,Rent,45000.0,Monthly shop rent
+2025-02-01,Salaries,57693.37,Staff salaries
+2025-02-01,Utilities,13080.0,Electricity and water
+2025-02-01,Packaging,3194.72,Packaging material
+2025-02-04,Marketing,3744.21,Local ads and promotions
+2025-02-04,Logistics,2176.4,Delivery and transport
+2025-02-11,Marketing,3109.75,Local ads and promotions
+2025-02-11,Logistics,2176.4,Delivery and transport
+2025-02-18,Marketing,3528.99,Local ads and promotions
+2025-02-18,Logistics,2176.4,Delivery and transport
+2025-02-25,Marketing,3021.46,Local ads and promotions
+2025-02-25,Logistics,2176.4,Delivery and transport
+2025-03-01,Purchases,344487.0,Stock purchased from suppliers
+2025-03-01,Rent,45000.0,Monthly shop rent
+2025-03-01,Salaries,58154.91,Staff salaries
+2025-03-01,Utilities,13260.0,Electricity and water
+2025-03-01,Packaging,4175.6,Packaging material
+2025-03-04,Marketing,4087.16,Local ads and promotions
+2025-03-04,Logistics,2883.77,Delivery and transport
+2025-03-11,Marketing,3679.7,Local ads and promotions
+2025-03-11,Logistics,2883.77,Delivery and transport
+2025-03-18,Marketing,3029.72,Local ads and promotions
+2025-03-18,Logistics,2883.77,Delivery and transport
+2025-03-25,Marketing,3483.24,Local ads and promotions
+2025-03-25,Logistics,2883.77,Delivery and transport
+2025-04-01,Purchases,377866.5,Stock purchased from suppliers
+2025-04-01,Rent,45000.0,Monthly shop rent
+2025-04-01,Salaries,58620.15,Staff salaries
+2025-04-01,Utilities,13440.0,Electricity and water
+2025-04-01,Packaging,4580.2,Packaging material
+2025-04-04,Marketing,4068.02,Local ads and promotions
+2025-04-04,Logistics,3206.14,Delivery and transport
+2025-04-11,Marketing,3135.6,Local ads and promotions
+2025-04-11,Logistics,3206.14,Delivery and transport
+2025-04-18,Marketing,3532.3,Local ads and promotions
+2025-04-18,Logistics,3206.14,Delivery and transport
+2025-04-25,Marketing,4064.51,Local ads and promotions
+2025-04-25,Logistics,3206.14,Delivery and transport
+2025-05-01,Purchases,451786.5,Stock purchased from suppliers
+2025-05-01,Rent,45000.0,Monthly shop rent
+2025-05-01,Salaries,59089.11,Staff salaries
+2025-05-01,Utilities,13620.0,Electricity and water
+2025-05-01,Packaging,5476.2,Packaging material
+2025-05-04,Marketing,3569.44,Local ads and promotions
+2025-05-04,Logistics,3884.68,Delivery and transport
+2025-05-11,Marketing,2460.21,Local ads and promotions
+2025-05-11,Logistics,3884.68,Delivery and transport
+2025-05-18,Marketing,3037.26,Local ads and promotions
+2025-05-18,Logistics,3884.68,Delivery and transport
+2025-05-25,Marketing,3885.35,Local ads and promotions
+2025-05-25,Logistics,3884.68,Delivery and transport
+2025-06-01,Purchases,385789.8,Stock purchased from suppliers
+2025-06-01,Rent,45000.0,Monthly shop rent
+2025-06-01,Salaries,59561.83,Staff salaries
+2025-06-01,Utilities,13800.0,Electricity and water
+2025-06-01,Packaging,4676.24,Packaging material
+2025-06-04,Marketing,3667.63,Local ads and promotions
+2025-06-04,Logistics,3361.05,Delivery and transport
+2025-06-11,Marketing,3699.91,Local ads and promotions
+2025-06-11,Logistics,3361.05,Delivery and transport
+2025-06-18,Marketing,3271.33,Local ads and promotions
+2025-06-18,Logistics,3361.05,Delivery and transport
+2025-06-25,Marketing,3020.33,Local ads and promotions
+2025-06-25,Logistics,3361.05,Delivery and transport
+2025-07-01,Purchases,370715.4,Stock purchased from suppliers
+2025-07-01,Rent,45000.0,Monthly shop rent
+2025-07-01,Salaries,60038.32,Staff salaries
+2025-07-01,Utilities,13980.0,Electricity and water
+2025-07-01,Packaging,4493.52,Packaging material
+2025-07-04,Marketing,4099.92,Local ads and promotions
+2025-07-04,Logistics,3271.84,Delivery and transport
+2025-07-11,Marketing,3178.28,Local ads and promotions
+2025-07-11,Logistics,3271.84,Delivery and transport
+2025-07-18,Marketing,3444.69,Local ads and promotions
+2025-07-18,Logistics,3271.84,Delivery and transport
+2025-07-25,Marketing,3325.66,Local ads and promotions
+2025-07-25,Logistics,3271.84,Delivery and transport
+2025-08-01,Purchases,459277.5,Stock purchased from suppliers
+2025-08-01,Rent,45000.0,Monthly shop rent
+2025-08-01,Salaries,60518.63,Staff salaries
+2025-08-01,Utilities,14160.0,Electricity and water
+2025-08-01,Packaging,5567.0,Packaging material
+2025-08-04,Marketing,3688.82,Local ads and promotions
+2025-08-04,Logistics,4105.66,Delivery and transport
+2025-08-11,Marketing,3280.05,Local ads and promotions
+2025-08-11,Logistics,4105.66,Delivery and transport
+2025-08-18,Marketing,4159.53,Local ads and promotions
+2025-08-18,Logistics,4105.66,Delivery and transport
+2025-08-25,Marketing,3293.92,Local ads and promotions
+2025-08-25,Logistics,4105.66,Delivery and transport
+2025-09-01,Purchases,438576.6,Stock purchased from suppliers
+2025-09-01,Rent,45000.0,Monthly shop rent
+2025-09-01,Salaries,61002.78,Staff salaries
+2025-09-01,Utilities,14340.0,Electricity and water
+2025-09-01,Packaging,5316.08,Packaging material
+2025-09-04,Marketing,3534.87,Local ads and promotions
+2025-09-04,Logistics,3970.45,Delivery and transport
+2025-09-11,Marketing,4184.56,Local ads and promotions
+2025-09-11,Logistics,3970.45,Delivery and transport
+2025-09-18,Marketing,3854.54,Local ads and promotions
+2025-09-18,Logistics,3970.45,Delivery and transport
+2025-09-25,Marketing,3425.29,Local ads and promotions
+2025-09-25,Logistics,3970.45,Delivery and transport
+2025-10-01,Purchases,608364.9,Stock purchased from suppliers
+2025-10-01,Rent,45000.0,Monthly shop rent
+2025-10-01,Salaries,61490.8,Staff salaries
+2025-10-01,Utilities,14520.0,Electricity and water
+2025-10-01,Packaging,7374.12,Packaging material
+2025-10-04,Marketing,3337.96,Local ads and promotions
+2025-10-04,Logistics,5576.68,Delivery and transport
+2025-10-11,Marketing,3302.66,Local ads and promotions
+2025-10-11,Logistics,5576.68,Delivery and transport
+2025-10-18,Marketing,3490.7,Local ads and promotions
+2025-10-18,Logistics,5576.68,Delivery and transport
+2025-10-25,Marketing,3724.28,Local ads and promotions
+2025-10-25,Logistics,5576.68,Delivery and transport
+2025-11-01,Purchases,529739.1,Stock purchased from suppliers
+2025-11-01,Rent,45000.0,Monthly shop rent
+2025-11-01,Salaries,61982.73,Staff salaries
+2025-11-01,Utilities,14700.0,Electricity and water
+2025-11-01,Packaging,6421.08,Packaging material
+2025-11-04,Marketing,3911.36,Local ads and promotions
+2025-11-04,Logistics,4916.14,Delivery and transport
+2025-11-11,Marketing,3711.34,Local ads and promotions
+2025-11-11,Logistics,4916.14,Delivery and transport
+2025-11-18,Marketing,3161.47,Local ads and promotions
+2025-11-18,Logistics,4916.14,Delivery and transport
+2025-11-25,Marketing,3525.22,Local ads and promotions
+2025-11-25,Logistics,4916.14,Delivery and transport
+2025-12-01,Purchases,481210.76,Stock purchased from suppliers
+2025-12-01,Rent,45000.0,Monthly shop rent
+2025-12-01,Salaries,62478.59,Staff salaries
+2025-12-01,Utilities,14880.0,Electricity and water
+2025-12-01,Packaging,5767.32,Packaging material
+2025-12-04,Marketing,3987.96,Local ads and promotions
+2025-12-04,Logistics,4469.67,Delivery and transport
+2025-12-11,Marketing,3119.22,Local ads and promotions
+2025-12-11,Logistics,4469.67,Delivery and transport
+2025-12-18,Marketing,3559.96,Local ads and promotions
+2025-12-18,Logistics,4469.67,Delivery and transport
+2025-12-25,Marketing,2666.66,Local ads and promotions
+2025-12-25,Logistics,4469.67,Delivery and transport
+2026-01-01,Purchases,412931.25,Stock purchased from suppliers
+2026-01-01,Rent,45000.0,Monthly shop rent
+2026-01-01,Salaries,62978.42,Staff salaries
+2026-01-01,Utilities,15060.0,Electricity and water
+2026-01-01,Packaging,4894.0,Packaging material
+2026-01-04,Marketing,2812.82,Local ads and promotions
+2026-01-04,Logistics,3838.73,Delivery and transport
+2026-01-11,Marketing,3130.56,Local ads and promotions
+2026-01-11,Logistics,3838.73,Delivery and transport
+2026-01-18,Marketing,2857.21,Local ads and promotions
+2026-01-18,Logistics,3838.73,Delivery and transport
+2026-01-25,Marketing,3861.51,Local ads and promotions
+2026-01-25,Logistics,3838.73,Delivery and transport
+2026-02-01,Purchases,351525.04,Stock purchased from suppliers
+2026-02-01,Rent,45000.0,Monthly shop rent
+2026-02-01,Salaries,63482.24,Staff salaries
+2026-02-01,Utilities,15240.0,Electricity and water
+2026-02-01,Packaging,4120.44,Packaging material
+2026-02-04,Marketing,3575.65,Local ads and promotions
+2026-02-04,Logistics,3270.6,Delivery and transport
+2026-02-11,Marketing,3541.95,Local ads and promotions
+2026-02-11,Logistics,3270.6,Delivery and transport
+2026-02-18,Marketing,4967.94,Local ads and promotions
+2026-02-18,Logistics,3270.6,Delivery and transport
+2026-02-25,Marketing,4369.13,Local ads and promotions
+2026-02-25,Logistics,3270.6,Delivery and transport
+2026-03-01,Purchases,424967.55,Stock purchased from suppliers
+2026-03-01,Rent,45000.0,Monthly shop rent
+2026-03-01,Salaries,63990.1,Staff salaries
+2026-03-01,Utilities,15420.0,Electricity and water
+2026-03-01,Packaging,4927.16,Packaging material
+2026-03-04,Marketing,4358.83,Local ads and promotions
+2026-03-04,Logistics,3957.13,Delivery and transport
+2026-03-11,Marketing,3928.37,Local ads and promotions
+2026-03-11,Logistics,3957.13,Delivery and transport
+2026-03-18,Marketing,4134.41,Local ads and promotions
+2026-03-18,Logistics,3957.13,Delivery and transport
+2026-03-25,Marketing,3626.14,Local ads and promotions
+2026-03-25,Logistics,3957.13,Delivery and transport
+2026-04-01,Purchases,472786.42,Stock purchased from suppliers
+2026-04-01,Rent,45000.0,Monthly shop rent
+2026-04-01,Salaries,64502.02,Staff salaries
+2026-04-01,Utilities,15600.0,Electricity and water
+2026-04-01,Packaging,5422.64,Packaging material
+2026-04-04,Marketing,3530.0,Local ads and promotions
+2026-04-04,Logistics,4405.9,Delivery and transport
+2026-04-11,Marketing,4144.88,Local ads and promotions
+2026-04-11,Logistics,4405.9,Delivery and transport
+2026-04-18,Marketing,3842.54,Local ads and promotions
+2026-04-18,Logistics,4405.9,Delivery and transport
+2026-04-25,Marketing,3502.33,Local ads and promotions
+2026-04-25,Logistics,4405.9,Delivery and transport
+2026-05-01,Purchases,529811.03,Stock purchased from suppliers
+2026-05-01,Rent,45000.0,Monthly shop rent
+2026-05-01,Salaries,65018.04,Staff salaries
+2026-05-01,Utilities,15780.0,Electricity and water
+2026-05-01,Packaging,6012.04,Packaging material
+2026-05-04,Marketing,4917.7,Local ads and promotions
+2026-05-04,Logistics,4941.15,Delivery and transport
+2026-05-11,Marketing,4474.97,Local ads and promotions
+2026-05-11,Logistics,4941.15,Delivery and transport
+2026-05-18,Marketing,4327.13,Local ads and promotions
+2026-05-18,Logistics,4941.15,Delivery and transport
+2026-05-25,Marketing,4579.43,Local ads and promotions
+2026-05-25,Logistics,4941.15,Delivery and transport
+2026-06-01,Purchases,430068.56,Stock purchased from suppliers
+2026-06-01,Rent,45000.0,Monthly shop rent
+2026-06-01,Salaries,65538.18,Staff salaries
+2026-06-01,Utilities,15960.0,Electricity and water
+2026-06-01,Packaging,4828.84,Packaging material
+2026-06-04,Marketing,4449.17,Local ads and promotions
+2026-06-04,Logistics,4013.97,Delivery and transport
+2026-06-11,Marketing,4073.79,Local ads and promotions
+2026-06-11,Logistics,4013.97,Delivery and transport
+2026-06-18,Marketing,4190.3,Local ads and promotions
+2026-06-18,Logistics,4013.97,Delivery and transport
+2026-06-25,Marketing,3818.8,Local ads and promotions
+2026-06-25,Logistics,4013.97,Delivery and transport
+2026-07-01,Purchases,430110.0,Stock purchased from suppliers
+2026-07-01,Rent,45000.0,Monthly shop rent
+2026-07-01,Salaries,66062.49,Staff salaries
+2026-07-01,Utilities,16140.0,Electricity and water
+2026-07-01,Packaging,4779.0,Packaging material
+2026-07-04,Marketing,4195.42,Local ads and promotions
+2026-07-04,Logistics,4017.35,Delivery and transport
+2026-07-11,Marketing,3853.62,Local ads and promotions
+2026-07-11,Logistics,4017.35,Delivery and transport
+2026-07-18,Marketing,4303.61,Local ads and promotions
+2026-07-18,Logistics,4017.35,Delivery and transport
+2026-07-25,Marketing,3216.21,Local ads and promotions
+2026-07-25,Logistics,4017.35,Delivery and transport

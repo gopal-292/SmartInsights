@@ -4,6 +4,7 @@ from typing import Any
 
 import pandas as pd
 
+from app.services.advisor import generate_action_plan
 from app.services.analytics import (
     dashboard_kpis,
     expense_analytics,
@@ -12,6 +13,7 @@ from app.services.analytics import (
     sales_analytics,
 )
 from app.services.ml_engine import analyze_sentiment, detect_anomalies, forecast_sales, segment_customers
+from app.services.patterns import detect_patterns
 
 
 def generate_insights(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
@@ -23,6 +25,7 @@ def generate_insights(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
     sentiment = analyze_sentiment(frames)
     anomalies = detect_anomalies(frames)
     forecast = forecast_sales(frames)
+    patterns = forecast.get("patterns") or detect_patterns(frames)
 
     insights: list[str] = []
 
@@ -32,11 +35,8 @@ def generate_insights(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
             f"producing a net profit of ₹{kpis['net_profit']:,.0f} ({kpis['profit_margin']:.1f}% margin)."
         )
 
-    if kpis["sales_growth"] != 0:
-        direction = "increased" if kpis["sales_growth"] > 0 else "decreased"
-        insights.append(
-            f"Sales growth {direction} by {abs(kpis['sales_growth']):.1f}% compared to the previous month."
-        )
+    # Pattern headlines carry the structural story: trend, momentum, seasonality, mix shifts.
+    insights.extend(patterns.get("headlines", []))
 
     if expenses.get("highest_category"):
         cat = expenses["highest_category"]
@@ -70,8 +70,11 @@ def generate_insights(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
         )
 
     if forecast.get("next_month_revenue") is not None:
+        first = (forecast.get("predictions") or [{}])[0]
         insights.append(
-            f"Predicted revenue for next month is approximately ₹{forecast['next_month_revenue']:,.0f}."
+            f"Next month is projected at ₹{forecast['next_month_revenue']:,.0f} "
+            f"(80% range ₹{first.get('lower_bound', 0):,.0f}-₹{first.get('upper_bound', 0):,.0f}) "
+            f"using {forecast.get('selected_model')} at {forecast.get('confidence')} confidence."
         )
 
     if not insights:
@@ -84,118 +87,22 @@ def generate_insights(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
         "insights": insights,
         "kpis": kpis,
         "profit": profit,
+        "patterns": patterns,
     }
 
 
 def generate_recommendations(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
-    kpis = dashboard_kpis(frames)
-    sales = sales_analytics(frames)
-    expenses = expense_analytics(frames)
-    inventory = inventory_analytics(frames)
-    sentiment = analyze_sentiment(frames)
-    anomalies = detect_anomalies(frames)
-    segments = segment_customers(frames)
-
-    recs: list[dict[str, str]] = []
-
-    for item in inventory.get("reorder_required") or []:
-        recs.append(
-            {
-                "priority": "high",
-                "area": "Inventory",
-                "problem": (
-                    f"{item['product']} is below reorder level "
-                    f"({item['current_stock']}/{item['reorder_level']})."
-                ),
-                "recommendation": (
-                    f"Reorder {item['product']} from {item.get('supplier') or 'your supplier'} "
-                    "to avoid stockouts."
-                ),
-            }
-        )
-
-    if kpis["profit_margin"] < 15 and kpis["total_revenue"] > 0:
-        recs.append(
-            {
-                "priority": "high",
-                "area": "Profitability",
-                "problem": f"Profit margin is only {kpis['profit_margin']:.1f}%.",
-                "recommendation": "Review high expense categories and promote higher-margin products.",
-            }
-        )
-
-    if expenses.get("expense_growth", 0) > 10:
-        recs.append(
-            {
-                "priority": "medium",
-                "area": "Expenses",
-                "problem": f"Expenses grew by {expenses['expense_growth']:.1f}% recently.",
-                "recommendation": "Investigate unnecessary spend and optimize marketing or overhead costs.",
-            }
-        )
-
-    for low in sales.get("low_products") or []:
-        recs.append(
-            {
-                "priority": "medium",
-                "area": "Sales",
-                "problem": f"{low['product']} is among the lowest-performing products.",
-                "recommendation": (
-                    f"Review pricing and availability of {low['product']} "
-                    "and consider a targeted promotion."
-                ),
-            }
-        )
-
-    if sentiment.get("main_complaint") and sentiment["main_complaint"] != "None detected":
-        recs.append(
-            {
-                "priority": "high",
-                "area": "Customer Experience",
-                "problem": f"Customers frequently mention {sentiment['main_complaint']}.",
-                "recommendation": "Improve customer service processes addressing this complaint theme.",
-            }
-        )
-
-    if anomalies.get("count"):
-        recs.append(
-            {
-                "priority": "medium",
-                "area": "Anomalies",
-                "problem": f"{anomalies['count']} unusual business patterns were detected.",
-                "recommendation": (
-                    "Investigate sales anomalies and unexpected expense spikes "
-                    "before they affect cash flow."
-                ),
-            }
-        )
-
-    for seg in segments.get("segments") or []:
-        if "High-Value" in seg["segment"]:
-            recs.append(
-                {
-                    "priority": "low",
-                    "area": "Customer Retention",
-                    "problem": f"You have {seg['count']} high-value customers.",
-                    "recommendation": "Create loyalty offers for high-value customers to protect retention.",
-                }
-            )
-            break
-
-    if not recs:
-        recs.append(
-            {
-                "priority": "low",
-                "area": "Setup",
-                "problem": "Limited business data available.",
-                "recommendation": (
-                    "Upload sales, expenses, inventory, and reviews "
-                    "to unlock actionable recommendations."
-                ),
-            }
-        )
-
-    return {"recommendations": recs[:12], "count": len(recs[:12])}
+    """Prioritised actions derived from detected patterns and the current market situation."""
+    plan = generate_action_plan(frames)
+    recommendations = plan["recommendations"][:14]
+    return {
+        "recommendations": recommendations,
+        "count": len(recommendations),
+        "market_context": plan.get("market_context", {}),
+        "key_findings": plan.get("key_findings", []),
+        "forecast_summary": plan.get("forecast_summary", {}),
+        "counts": plan.get("counts", {}),
+    }
 
 
 def answer_business_question(frames: dict[str, pd.DataFrame], question: str) -> dict[str, Any]:
@@ -207,6 +114,7 @@ def answer_business_question(frames: dict[str, pd.DataFrame], question: str) -> 
     sentiment = analyze_sentiment(frames)
     forecast = forecast_sales(frames)
     anomalies = detect_anomalies(frames)
+    patterns = forecast.get("patterns") or {}
     sources: list[str] = []
 
     if "profit" in q and ("decrease" in q or "drop" in q or "why" in q):
@@ -215,11 +123,57 @@ def answer_business_question(frames: dict[str, pd.DataFrame], question: str) -> 
             f"Profit is currently ₹{kpis['net_profit']:,.0f} with a margin of {kpis['profit_margin']:.1f}%. "
             f"Revenue is ₹{kpis['total_revenue']:,.0f} while expenses are ₹{kpis['total_expenses']:,.0f}."
         )
+        margin = patterns.get("margin") or {}
+        if margin.get("squeeze"):
+            answer += (
+                f" Costs are the driver: expenses grew {margin['expense_growth_pct']:+.1f}% while "
+                f"revenue grew {margin['revenue_growth_pct']:+.1f}%."
+            )
         if expenses.get("highest_category"):
             cat = expenses["highest_category"]
             answer += f" The largest expense driver is {cat['category']} (₹{cat['amount']:,.0f})."
         if kpis["sales_growth"] < 0:
             answer += f" Sales also declined by {abs(kpis['sales_growth']):.1f}% month-over-month."
+    elif any(k in q for k in ("trend", "pattern", "growing", "declining", "momentum")):
+        sources = ["patterns"]
+        headlines = patterns.get("headlines") or []
+        answer = (
+            " ".join(headlines)
+            if headlines
+            else patterns.get("message", "Not enough dated sales history to detect trends yet.")
+        )
+    elif "season" in q:
+        sources = ["patterns"]
+        season = patterns.get("seasonality") or {}
+        answer = (
+            season["summary"]
+            if season.get("detected")
+            else season.get("message", "No clear seasonal pattern was detected in your data.")
+        )
+    elif any(k in q for k in ("recommend", "what should i do", "action", "advice", "improve")):
+        sources = ["recommendations"]
+        plan = generate_action_plan(frames)
+        top = plan["recommendations"][:3]
+        answer = plan["market_context"].get("summary", "") + " Top actions: " + " ".join(
+            f"({i + 1}) {item['action']}" for i, item in enumerate(top)
+        )
+    elif any(k in q for k in ("accurate", "accuracy", "reliable", "how good")):
+        sources = ["forecast"]
+        accuracy = forecast.get("accuracy")
+        if accuracy:
+            answer = (
+                f"The forecast uses {forecast['selected_model']}, chosen by walk-forward backtesting "
+                f"against {len(forecast.get('evaluation', []))} candidate models. On held-out months it "
+                f"averaged {accuracy['mape']}% error (MAE ₹{accuracy['mae']:,.0f}) across "
+                f"{accuracy['folds']} folds, and called the direction of change correctly "
+                f"{accuracy.get('direction_accuracy')}% of the time. Overall confidence: "
+                f"{forecast.get('confidence')}."
+            )
+        else:
+            answer = (
+                "There is not yet enough history to validate the forecast, so treat it as indicative. "
+                "Accuracy metrics appear once you have around 6+ months of sales data."
+            )
     elif "highest revenue" in q or "top product" in q or "best product" in q:
         sources = ["sales"]
         top = sales.get("top_product")
@@ -252,10 +206,19 @@ def answer_business_question(frames: dict[str, pd.DataFrame], question: str) -> 
             answer = f"{best['period']} had the highest sales at ₹{best['value']:,.0f}."
         else:
             answer = "Monthly sales history is not available yet."
-    elif "expected revenue" in q or "forecast" in q or "next month" in q:
+    elif "expected revenue" in q or "forecast" in q or "next month" in q or "predict" in q:
         sources = ["forecast"]
-        if forecast.get("next_month_revenue") is not None:
-            answer = f"Expected revenue next month is about ₹{forecast['next_month_revenue']:,.0f}."
+        predictions = forecast.get("predictions") or []
+        if predictions:
+            first = predictions[0]
+            answer = (
+                f"{first['period']} is projected at ₹{first['predicted_revenue']:,.0f}, with an 80% "
+                f"range of ₹{first['lower_bound']:,.0f} to ₹{first['upper_bound']:,.0f}. "
+                f"That is {first['change_vs_recent_avg']:+.1f}% against the recent monthly average. "
+                f"Model: {forecast['selected_model']} ({forecast.get('confidence')} confidence)."
+            )
+            if len(predictions) >= 3:
+                answer += f" The next {len(predictions)} months total ₹{forecast['horizon_total']:,.0f}."
         else:
             answer = forecast.get("message", "Not enough history to forecast yet.")
     elif "complain" in q or "sentiment" in q or ("customer" in q and "issue" in q):
@@ -280,7 +243,8 @@ def answer_business_question(frames: dict[str, pd.DataFrame], question: str) -> 
         summary = generate_insights(frames)["summary"]
         answer = (
             f"Based on your current business data: {summary} "
-            "Try asking about profit, top products, reorders, expenses, forecast, or customer complaints."
+            "Try asking about profit, trends, seasonality, top products, reorders, expenses, "
+            "forecast accuracy, or what you should do next."
         )
 
     return {"answer": answer, "sources": sources, "kpis_snapshot": kpis}
