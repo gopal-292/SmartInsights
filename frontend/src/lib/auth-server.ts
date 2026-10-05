@@ -10,6 +10,7 @@ export const auth = betterAuth({
     connectionString:
       process.env.DATABASE_URL ||
       "postgresql://smartinsights:smartinsights@localhost:5433/smartinsights",
+    connectionTimeoutMillis: 3000,
   }),
   emailAndPassword: {
     enabled: true,

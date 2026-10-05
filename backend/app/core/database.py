@@ -6,7 +6,11 @@ from app.core.config import BASE_DIR, settings
 
 def _build_engine():
     url = settings.sqlalchemy_database_url
-    connect_args = {"check_same_thread": False} if url.startswith("sqlite") else {}
+    if url.startswith("sqlite"):
+        connect_args = {"check_same_thread": False}
+    else:
+        # Fail fast when Docker/Postgres is offline instead of hanging startup.
+        connect_args = {"connect_timeout": 3}
     eng = create_engine(url, connect_args=connect_args, pool_pre_ping=True)
     if "postgresql" in url:
         try:

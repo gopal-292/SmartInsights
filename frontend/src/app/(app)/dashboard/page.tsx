@@ -22,6 +22,7 @@ import {
   EmptyState,
   ErrorBanner,
   FeatureCard,
+  HeroBanner,
   KpiCard,
   LoadingBlock,
   PageHeader,
@@ -151,12 +152,50 @@ export default function DashboardPage() {
     },
   ];
 
+  const revenueSpark = (data.sales.monthly || []).map((m) => m.value);
+  const profitSpark = (data.profitability.monthly || []).map((m) => m.profit);
+
   return (
     <div>
+      <HeroBanner
+        title={
+          <>
+            Welcome back, <span className="si-gradient-text">{firstName}</span>
+          </>
+        }
+        subtitle="Your command center for KPIs, ML forecasts, and AI-driven business actions."
+      >
+        <DataGrid className="sm:grid-cols-2 lg:grid-cols-4">
+          <KpiCard
+            label="Revenue"
+            value={inr(k.total_revenue)}
+            icon={IndianRupee}
+            tone="accent"
+            spark={revenueSpark.length > 1 ? revenueSpark : undefined}
+          />
+          <KpiCard
+            label="Net Profit"
+            value={inr(k.net_profit)}
+            icon={TrendingUp}
+            tone={k.net_profit >= 0 ? "emerald" : "rose"}
+            trend={k.net_profit >= 0 ? "up" : "down"}
+            spark={profitSpark.length > 1 ? profitSpark : undefined}
+          />
+          <KpiCard label="Margin" value={pct(k.profit_margin)} icon={Percent} />
+          <KpiCard
+            label="Growth"
+            value={pct(k.sales_growth)}
+            icon={ShoppingCart}
+            tone={k.sales_growth >= 0 ? "emerald" : "rose"}
+            trend={k.sales_growth > 0 ? "up" : k.sales_growth < 0 ? "down" : "flat"}
+          />
+        </DataGrid>
+      </HeroBanner>
+
       <PageHeader
-        eyebrow="Workspace"
-        title={`Welcome back, ${firstName}`}
-        subtitle="Your live KPI board and quick access to every SmartInsights module."
+        eyebrow="Metrics"
+        title="Performance overview"
+        subtitle="Core financial indicators from your uploaded datasets."
       />
 
       <DataGrid className="sm:grid-cols-2 xl:grid-cols-5">
